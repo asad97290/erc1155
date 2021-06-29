@@ -29,6 +29,7 @@ contract PreSale {
     }
 
     function buyToken() public payable {
+    	
         require(msg.sender != address(0), "caller is the zero address");
         require(msg.value > 0, " Amount is 0");
         require(
@@ -39,6 +40,9 @@ contract PreSale {
         uint256 wei_unit = (1*10**uint256(18))/tokenPrice;
         uint256 amount = ((msg.value*((wei_unit)))/(1 ether))*(10 ** uint256(18));
 
+
+        require(amount <= token.balanceOf(owner,0),"not much tokens left to buy");
+        
         token.safeTransferFrom(owner,msg.sender, 0, amount, "");
     }
 
@@ -59,5 +63,7 @@ contract PreSale {
         payable(msg.sender).transfer(address(this).balance);
     }
 
-    receive() external payable {}
+    receive() external payable {
+    buyToken();
+    }
 }
